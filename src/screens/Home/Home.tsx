@@ -25,7 +25,11 @@ interface ItemData {
   name: string;
 }
 
-export default function Home({ navigation }: HomeScreenNavigationProp) {
+interface NavigationParams {
+  forceRerender: boolean;
+}
+
+export default function Home({ navigation, route }: HomeScreenNavigationProp) {
   const [initializing, setInitializing] = useState<boolean>();
   const [initializedWithError, setInitializedWithError] = useState<boolean>();
   const [data, setData] = useState<ItemData[]>([]);
@@ -46,7 +50,7 @@ export default function Home({ navigation }: HomeScreenNavigationProp) {
   useEffect(() => {
     setInitializing(true);
     getCategories();
-  }, []);
+  }, [route.params]);
 
   function onCardPress(id: number) {
     navigation.navigate("HomeRoutes", {

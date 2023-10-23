@@ -1,15 +1,16 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, ScrollView } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useSelector } from "react-redux";
 
 import { styles } from "./style";
-import { CartContext } from "../../contexts/cartContext";
 import LoggedCheckoutHeader from "../../components/logged-checkout/LoggedCheckoutHeader/LoggedCheckoutHeader";
 import ShipAddressBox from "../../components/logged-checkout/ShipAddressBox/ShipAddressBox";
 import PaymentMethod from "../../components/logged-checkout/PaymentMethod/PaymentMethod";
 import DeliveryMethod from "../../components/logged-checkout/DeliveryMethod/DeliveryMethod";
 import { deliveryMethods } from "../../util/deliveryData";
 import FooterSummary from "../../components/logged-checkout/FooterSummary/FooterSummary";
+import { cartTotalPriceSelector } from "../../redux/selectors";
 
 type LoggedCheckoutStackParamList = {
   LoggedCheckout: any;
@@ -59,7 +60,7 @@ export default function LoggedCheckout({
     DeliveryMethodData | undefined
   >(undefined);
 
-  const cartContext = useContext(CartContext);
+  const cartTotalPrice: number = useSelector(cartTotalPriceSelector);
 
   const address = route.params as ReceivedAddressData;
 
@@ -108,7 +109,6 @@ export default function LoggedCheckout({
           deliveryMethods={deliveryMethods}
           retrieveDeliveryData={setDeliveryMethodHandler}
         />
-
       </ScrollView>
 
       <FooterSummary
@@ -119,7 +119,7 @@ export default function LoggedCheckout({
             ? false
             : true
         }
-        totalPrice={cartContext.getTotalPrice()}
+        totalPrice={cartTotalPrice}
       />
     </View>
   );

@@ -1,11 +1,19 @@
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useState } from "react";
 import { Entypo } from "@expo/vector-icons";
+import { useDispatch, useSelector } from "react-redux";
 
 import { styles } from "./style";
 import { colors } from "../../../styles/globalStyles";
-import { CartContext } from "../../../contexts/cartContext";
+import { RootState } from "../../../redux/store";
+import {
+  addToCart,
+  increment,
+  decrement,
+  removeItem,
+} from "../../../redux/features/cart/cartSlice";
+import { totalAmountOfAnItemById } from "../../../redux/selectors";
 
 interface AmountControlerProps {
   productId: number;
@@ -14,22 +22,37 @@ interface AmountControlerProps {
   images: string[] | undefined;
 }
 
+interface cartItemType {
+  id: number;
+  productName: string;
+  productUnitPrice: number;
+  images: string[];
+  productQuantity: number;
+  productTotalPrice: number;
+}
+
 export default function AmountControler(props: AmountControlerProps) {
   const [amount, setAmount] = useState(0);
 
-  const cartContext = useContext(CartContext);
+  const dispatch = useDispatch();
+
+  const totalAmountOfTheItemInCart: number | undefined = useSelector(
+    (state: RootState) => totalAmountOfAnItemById(state, props.productId)
+  );
 
   useEffect(() => {
-    setAmount(cartContext.getItemAmount(props.productId));
-  }, []);
+    if (totalAmountOfTheItemInCart) {
+      setAmount(totalAmountOfTheItemInCart);
+    }
+  }, [totalAmountOfTheItemInCart]);
 
   function onMinusPress() {
     if (amount === 0) {
       return;
     } else if (amount === 1) {
-      cartContext.deleteItem(props.productId);
+      dispatch(removeItem(props.productId));
     } else {
-      cartContext.removeOneFromExistingItem(props.productId);
+      dispatch(decrement(props.productId));
     }
     setAmount((cur) => cur - 1);
   }
@@ -41,14 +64,16 @@ export default function AmountControler(props: AmountControlerProps) {
       props.productPrice !== undefined &&
       props.images !== undefined
     ) {
-      cartContext.addNewItem({
-        id: props.productId,
-        productName: props.productName,
-        productUnitPrice: props.productPrice,
-        images: props.images,
-      });
+      dispatch(
+        addToCart({
+          id: props.productId,
+          productName: props.productName,
+          productUnitPrice: props.productPrice,
+          images: props.images,
+        })
+      );
     } else {
-      cartContext.addOneToExistingItem(props.productId);
+      dispatch(increment(props.productId));
     }
     setAmount((cur) => cur + 1);
   }

@@ -6,7 +6,10 @@ import { NavigationContainer } from "@react-navigation/native";
 
 import InitialRoutes from "./src/routes/InitialRoutes";
 import AuthContextProvider from "./src/contexts/authContext";
-import CartContextProvider from "./src/contexts/cartContext";
+
+// FOR REDUX 
+import { Provider } from "react-redux";
+import store from "./src/redux/store";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,9 +37,9 @@ export default function App() {
     <SafeAreaView onLayout={onLayoutRootView} style={styles.rootAppContainer}>
       <NavigationContainer>
         <AuthContextProvider>
-          <CartContextProvider>
-            <InitialRoutes />
-          </CartContextProvider>
+          <Provider store={store}>
+              <InitialRoutes />
+          </Provider>
         </AuthContextProvider>
       </NavigationContainer>
     </SafeAreaView>

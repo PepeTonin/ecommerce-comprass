@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   MaterialCommunityIcons,
@@ -10,21 +10,31 @@ import Home from "../screens/Home/Home";
 import Cart from "../screens/Cart/Cart";
 import Profile from "../screens/Profile/Profile";
 import { colors, fontFamilies, fontSizes } from "../styles/globalStyles";
-import { CartContext } from "../contexts/cartContext";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 const Tab = createBottomTabNavigator();
 
 const iconsSize = 32;
 
+interface cartItemType {
+  id: number;
+  productName: string;
+  productUnitPrice: number;
+  images: string[];
+  productQuantity: number;
+  productTotalPrice: number;
+}
+
 export default function BottomTabRoutes() {
   const [isCartEmpty, setIsCartEmpty] = useState<boolean>(true);
 
-  const cartContext = useContext(CartContext);
+  const cart: cartItemType[] = useSelector((state: RootState) => state.cart);
 
   useEffect(() => {
-    if (cartContext.items.length === 0) setIsCartEmpty(true);
+    if (cart.length === 0) setIsCartEmpty(true);
     else setIsCartEmpty(false);
-  }, [cartContext.items]);
+  }, [cart]);
 
   return (
     <Tab.Navigator

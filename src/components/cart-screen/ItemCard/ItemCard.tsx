@@ -1,11 +1,17 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Image, Text, View } from "react-native";
 import { Entypo } from "@expo/vector-icons";
+import { useSelector, useDispatch } from "react-redux";
+
+import {
+  increment,
+  decrement,
+  removeItem,
+} from "../../../redux/features/cart/cartSlice";
 
 import { styles } from "./style";
 import { colors } from "../../../styles/globalStyles";
 import { Pressable } from "react-native";
-import { CartContext } from "../../../contexts/cartContext";
 
 interface Props {
   id: number;
@@ -14,6 +20,15 @@ interface Props {
   unitPrice: number;
   totalPrice: number;
   style?: {};
+}
+
+interface cartItemType {
+  id: number;
+  productName: string;
+  productUnitPrice: number;
+  images: string[];
+  productQuantity: number;
+  productTotalPrice: number;
 }
 
 export default function ItemCard({
@@ -27,30 +42,31 @@ export default function ItemCard({
   const [amountCard, setAmountCard] = useState(0);
   const [totalPriceCard, setTotalPriceCard] = useState(totalPrice);
 
-  const cartContext = useContext(CartContext);
+  const cart: cartItemType[] = useSelector((state: any) => state.cart);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setTotalPriceCard(amountCard * unitPrice);
   }, [amountCard]);
 
   useEffect(() => {
-    cartContext.items.forEach((item) => {
+    cart.forEach((item) => {
       if (item.id === id) {
         setAmountCard(item.productQuantity);
       }
     });
-  }, [cartContext.items]);
+  }, [cart]);
 
   function onPressMinus() {
     if (amountCard === 0) {
       return;
     }
-    cartContext.removeOneFromExistingItem(id);
+    dispatch(decrement(id));
     setAmountCard((cur) => cur - 1);
   }
 
   function onPressPlus() {
-    cartContext.addOneToExistingItem(id);
+    dispatch(increment(id));
     setAmountCard((cur) => cur + 1);
   }
 
@@ -59,7 +75,7 @@ export default function ItemCard({
   }
 
   function deleteHandler() {
-    cartContext.deleteItem(id);
+    dispatch(removeItem(id));
   }
 
   return (

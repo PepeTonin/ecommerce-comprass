@@ -1,10 +1,19 @@
-import { useState, memo, useContext, useEffect } from "react";
+import { useState, memo, useEffect } from "react";
 import { Text, View, Pressable, Image } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 
 import { styles } from "./style";
 import { colors } from "../../../styles/globalStyles";
-import { CartContext } from "../../../contexts/cartContext";
+
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToCart,
+  increment,
+  decrement,
+  removeItem,
+} from "../../../redux/features/cart/cartSlice";
+import { RootState } from "../../../redux/store";
+import { totalAmountOfAnItemById } from "../../../redux/selectors";
 
 interface ProductCardProps {
   imageUrl: string[];
@@ -15,31 +24,46 @@ interface ProductCardProps {
   productPrice: number;
 }
 
+interface cartItemType {
+  id: number;
+  productName: string;
+  productUnitPrice: number;
+  images: string[];
+  productQuantity: number;
+  productTotalPrice: number;
+}
+
 function ProductCard(props: ProductCardProps) {
   const [amount, setAmount] = useState<number>(0);
-  const cartContext = useContext(CartContext);
+
+  const totalAmountOfTheItemInCart: number | undefined = useSelector(
+    (state: RootState) => totalAmountOfAnItemById(state, props.productId)
+  );
+  const dispatch = useDispatch();
 
   function onMinusPress() {
     if (amount === 0) {
       return;
     } else if (amount === 1) {
-      cartContext.deleteItem(props.productId);
+      dispatch(removeItem(props.productId));
     } else {
-      cartContext.removeOneFromExistingItem(props.productId);
+      dispatch(decrement(props.productId));
     }
     setAmount((cur) => cur - 1);
   }
 
   function onPlusPress() {
     if (amount === 0) {
-      cartContext.addNewItem({
-        id: props.productId,
-        productName: props.productName,
-        productUnitPrice: props.productPrice,
-        images: props.imageUrl,
-      });
+      dispatch(
+        addToCart({
+          id: props.productId,
+          productName: props.productName,
+          productUnitPrice: props.productPrice,
+          images: props.imageUrl,
+        })
+      );
     } else {
-      cartContext.addOneToExistingItem(props.productId);
+      dispatch(increment(props.productId));
     }
     setAmount((cur) => cur + 1);
   }
@@ -49,8 +73,10 @@ function ProductCard(props: ProductCardProps) {
   }
 
   useEffect(() => {
-    setAmount(cartContext.getItemAmount(props.productId));
-  }, [cartContext.items]);
+    if (totalAmountOfTheItemInCart) {
+      setAmount(totalAmountOfTheItemInCart);
+    }
+  }, [totalAmountOfTheItemInCart]);
 
   return (
     <View style={styles.outerContainer}>

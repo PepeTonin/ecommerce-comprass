@@ -52,7 +52,9 @@ function HomeSection(props: HomeSectionProps) {
       {initializing && <ActivityIndicator color={colors.red_500} />}
       {!initializing && !initializedWithError && (
         <FlatList
-          initialNumToRender={5}
+          maxToRenderPerBatch={8}
+          initialNumToRender={8}
+          windowSize={8}
           horizontal
           showsHorizontalScrollIndicator={false}
           data={data}

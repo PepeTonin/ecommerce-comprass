@@ -1,23 +1,35 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
+import { useSelector } from "react-redux";
 
 import { styles } from "./style";
 import Button from "../../shared/Button/Button";
-import { CartContext } from "../../../contexts/cartContext";
+import { RootState } from "../../../redux/store";
+import { cartTotalPriceSelector } from "../../../redux/selectors";
 
 interface BuyButtonProps {
   onBuyPress: () => void;
   isCartEmpty: boolean;
 }
 
+interface cartItemType {
+  id: number;
+  productName: string;
+  productUnitPrice: number;
+  images: string[];
+  productQuantity: number;
+  productTotalPrice: number;
+}
+
 export default function BuyButtonBox(props: BuyButtonProps) {
   const [totalAmount, setTotalAmount] = useState<number>(0);
 
-  const cartContext = useContext(CartContext);
+  const cart: cartItemType[] = useSelector((state: RootState) => state.cart);
+  const cartTotalPrice: number = useSelector(cartTotalPriceSelector);
 
   useEffect(() => {
-    setTotalAmount(cartContext.getTotalPrice());
-  }, [cartContext.items]);
+    setTotalAmount(cartTotalPrice);
+  }, [cart]);
 
   function numberToTwoDecimalPlacesString(price: number) {
     return price.toFixed(2).toString().replace(".", ",");
