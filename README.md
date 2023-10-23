@@ -24,8 +24,8 @@ The "Comprass" project is a mobile shopping application that allows users to bro
 
 #### Branches:
 
-- feat/cart-react-context:
+- **feat/cart-react-context:**
   This branch was initially constructed. However, upon completing the project using this approach, I encountered a performance issue. Consequently, I opted to change my approach for handling the app's shopping cart state.
 
-- feat/cart-redux
+- **feat/cart-redux:**
   After identifying a performance issue when using React's 'context API,' I made the decision to implement 'Redux' for managing the shopping cart state of the app. This branch includes the app with this feature successfully integrated.
