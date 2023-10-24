@@ -1,5 +1,8 @@
 ### E-COMMERCE APP
 
+Presentation link:
+<https://apresentacao-react-native-uol.my.canva.site/home>
+
 **Personal Project**
 
 **Project overview:**
