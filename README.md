@@ -22,6 +22,10 @@ The "Comprass" project is a mobile shopping application that allows users to bro
 
 <https://fakeapi.platzi.com>
 
+#### Link to the app demonstration video:
+
+[YouTube video](https://youtu.be/Qd6Q5CPupE0)
+
 #### Branches:
 
 - **feat/cart-react-context:**
@@ -29,8 +33,3 @@ The "Comprass" project is a mobile shopping application that allows users to bro
 
 - **feat/cart-redux:**
   After identifying a performance issue when using React's 'context API,' I made the decision to implement 'Redux' for managing the shopping cart state of the app. This branch includes the app with this feature successfully integrated.
-
-
-#### Screenshots:
-
-![screenshot](./screenshots/)
